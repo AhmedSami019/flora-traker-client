@@ -1,4 +1,5 @@
 import { NavLink } from "react-router";
+import logo from "../../assets/logo.png";
 
 const Navbar = () => {
   // links
@@ -17,7 +18,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar px-10">
+    <div className="navbar md:px-10">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -44,7 +45,12 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <NavLink to={'/'} className="flex items-end gap-2">
+          <div className="w-10">
+            <img className="w-full" src={logo} alt="Flora brand logo" />
+          </div>
+          <h4 className="logo text-3xl hidden md:block">Flora</h4>
+        </NavLink>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 font-medium">{links}</ul>
@@ -60,7 +66,7 @@ const Navbar = () => {
           >
             <div className="w-10 rounded-full">
               <img
-                alt="Tailwind CSS Navbar component"
+                alt="woman smiling in natural outdoor setting with soft lighting"
                 src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
               />
             </div>

@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+ul .active{
+    @apply border-b-2 border-[#29a189] bg-base-300
+}

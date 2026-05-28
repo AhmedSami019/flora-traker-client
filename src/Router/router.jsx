@@ -3,6 +3,7 @@ import HomeLayout from "../Layouts/HomeLayout";
 import Home from "../Pages/Home/Home";
 import About from "../Pages/About/About";
 import Shop from "../Pages/Shop/Shop";
+import AdminLayout from "../Layouts/AdminLayout";
 
 const router = createBrowserRouter([
 {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
             Component: Shop
         }
     ]
+},
+{
+    path: "/dashboard",
+    Component: AdminLayout
 }
 ])
 

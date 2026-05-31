@@ -1,6 +1,12 @@
+import { useContext } from "react";
 import { NavLink } from "react-router";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Register = () => {
+
+const {name} = useContext(AuthContext)
+console.log(name);
+
   return (
     <div className="card bg-base-100 mt-10 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
       <div className="card-body">

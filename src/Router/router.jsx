@@ -4,6 +4,7 @@ import Home from "../Pages/Home/Home";
 import About from "../Pages/About/About";
 import Shop from "../Pages/Shop/Shop";
 import AdminLayout from "../Layouts/AdminLayout";
+import Register from "../Pages/Register/Register";
 
 const router = createBrowserRouter([
 {
@@ -26,7 +27,13 @@ const router = createBrowserRouter([
 },
 {
     path: "/dashboard",
-    Component: AdminLayout
+    Component: AdminLayout,
+    children: [
+        {
+            path: "register",
+            Component: Register 
+        }
+    ]
 }
 ])
 

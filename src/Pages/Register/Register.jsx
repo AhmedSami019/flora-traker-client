@@ -4,8 +4,24 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Register = () => {
 
-const {name} = useContext(AuthContext)
-console.log(name);
+const {signUpWithEmailAndPass, setUser, setLoading} = useContext(AuthContext)
+
+// handler function
+const handleCreateUser= (e)=>{
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const formValue = Object.fromEntries(formData.entries())
+    
+    signUpWithEmailAndPass(formValue.email, formValue.password)
+    .then(result =>{
+        setUser(result.user)
+        setLoading(false)
+        console.log("user created successful", result.user);
+    })
+    .then(error =>{
+        console.log(error.massage);
+    })
+}
 
   return (
     <div className="card bg-base-100 mt-10 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
@@ -17,7 +33,7 @@ console.log(name);
             Login
           </NavLink>
         </p>
-        <form className="fieldset">
+        <form onSubmit={handleCreateUser} className="fieldset">
           <label className="label">Name</label>
           <input
             type="text"

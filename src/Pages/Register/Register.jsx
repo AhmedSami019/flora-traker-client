@@ -68,12 +68,12 @@ const Register = () => {
   };
 
   return (
-    <div className="card bg-base-100 mt-10 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
+    <div className="card bg-base-100 mt-15 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
       <div className="card-body">
         <h2 className="text-2xl text-center font-bold">Register</h2>
         <p className="text-center">
           Already have an account?{" "}
-          <NavLink to={"/login"} className={"text-blue-600"}>
+          <NavLink to={"/dashboard/login"} className={"text-blue-600"}>
             Login
           </NavLink>
         </p>

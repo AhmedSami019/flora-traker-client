@@ -7,6 +7,7 @@ import AdminLayout from "../Layouts/AdminLayout";
 import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
 import Profile from "../Pages/Profile/Profile";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
 {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
     children: [
         {
             index: true,
-            Component: Profile
+            element: <PrivateRoute><Profile></Profile></PrivateRoute>
         },
         {
             path: "register",

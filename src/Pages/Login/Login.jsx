@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import Swal from "sweetalert2";
 
@@ -7,6 +7,9 @@ const Login = () => {
   const { setUser, setLoading, signInWithEmailAndPass } =
     useContext(AuthContext);
     const navigate = useNavigate()
+
+    const location = useLocation()
+    const path = location.state || '/dashboard'
 
   // login handler function
   const handleSingUser = (e) => {
@@ -24,7 +27,7 @@ const Login = () => {
           icon: "success",
           text: "User Logged successfully!",
         });
-        navigate('/dashboard')
+        navigate(path)
       })
       .catch((error) => {
         setLoading(false);

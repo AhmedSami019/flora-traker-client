@@ -28,15 +28,14 @@ const AuthProvider = ({ children }) => {
 
   // signOut user
   const singOutUser = () => {
-    setLoading(true);
     return signOut(auth)
       .then(() => {
-        setLoading(false);
         Swal.fire({
           title: "Successful",
           icon: "success",
           text: "User singOut successful!",
         });
+        setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
@@ -56,6 +55,7 @@ const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
+      setLoading(false)
     });
     return unSubscribe;
   }, []);

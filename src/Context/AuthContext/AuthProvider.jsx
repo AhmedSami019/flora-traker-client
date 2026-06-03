@@ -30,7 +30,7 @@ const AuthProvider = ({children}) => {
                 console.log('something went wrong');
             }
         })
-        return unSubscribe()
+        return unSubscribe
     },[])
 
     const userInfo = {

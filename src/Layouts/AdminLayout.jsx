@@ -1,9 +1,7 @@
 import { Outlet } from "react-router";
-import auth from "../firebase/firebase.init";
 import { Bounce, ToastContainer } from "react-toastify";
 
 const AdminLayout = () => {
-    console.log(auth);
     return (
         <div>
             <Outlet></Outlet>

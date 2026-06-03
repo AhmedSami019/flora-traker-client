@@ -1,11 +1,16 @@
 import { useContext } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { Bounce, toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { updateProfile } from "firebase/auth";
 
 const Register = () => {
   const { signUpWithEmailAndPass, setUser, setLoading } =
     useContext(AuthContext);
+
+  // navigate
+  const navigate = useNavigate();
 
   // handler function
   const handleCreateUser = (e) => {
@@ -14,7 +19,7 @@ const Register = () => {
     const formValue = Object.fromEntries(formData.entries());
 
     if (formValue.password !== formValue.confirmPassword) {
-      toast.warn("confirm password is not equal password!", {
+      toast.warn("match both password!", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -25,16 +30,40 @@ const Register = () => {
         theme: "light",
         transition: Bounce,
       });
+      return;
     }
 
     signUpWithEmailAndPass(formValue.email, formValue.password)
       .then((result) => {
-        setUser(result.user);
-        setLoading(false);
-        console.log("user created successful", result.user);
+        const user = result.user;
+        return updateProfile(user, {
+          displayName: formValue.userName,
+          photoURL: formValue.photo,
+        }).then(() => {
+          setUser({
+            ...user,
+            displayName: formValue.userName,
+            photoURL: formValue.photo,
+          });
+          console.log(user);
+          setLoading(false);
+
+          Swal.fire({
+            title: "Successful",
+            icon: "success",
+            text: "User signed up successfully!",
+          });
+
+          navigate("/dashboard");
+        });
       })
-      .then((error) => {
-        console.log(error.massage);
+      .catch((error) => {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: `${error.message}`,
+        });
       });
   };
 
@@ -76,6 +105,7 @@ const Register = () => {
             className="input w-full"
             name="password"
             placeholder="Password"
+            pattern="(?=.*\d)(?=.*[!@#$%^&*]).{8,}"
           />
           <label className="label">Confirm Password</label>
           <input
@@ -83,6 +113,7 @@ const Register = () => {
             className="input w-full"
             name="confirmPassword"
             placeholder="Confirm Password"
+            pattern="(?=.*\d)(?=.*[!@#$%^&*]).{8,}"
           />
           <div>
             <a className="link link-hover">Forgot password?</a>

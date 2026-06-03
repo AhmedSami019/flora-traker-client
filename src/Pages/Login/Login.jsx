@@ -1,26 +1,30 @@
 import { useContext } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import Swal from "sweetalert2";
 
 const Login = () => {
   const { setUser, setLoading, signInWithEmailAndPass } =
     useContext(AuthContext);
+    const navigate = useNavigate()
 
   // login handler function
   const handleSingUser = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const formValue = Object.fromEntries(formData.entries);
+    const formValue = Object.fromEntries(formData.entries());
+    console.log(formValue);
+
     signInWithEmailAndPass(formValue.email, formValue.password)
       .then((result) => {
         setUser(result.user);
         setLoading(false);
         Swal.fire({
-          title: "Successful",
+          title: "welcome",
           icon: "success",
           text: "User Logged successfully!",
         });
+        navigate('/dashboard')
       })
       .catch((error) => {
         setLoading(false);
@@ -45,14 +49,15 @@ const Login = () => {
         </p>
         <form onSubmit={handleSingUser} className="fieldset">
           <label className="label">Email</label>
-          <input type="email" className="input" placeholder="Email" />
+          <input type="email" name="email" className="input" placeholder="Email" />
           <label className="label">Password</label>
-          <input type="password" className="input" placeholder="Password" />
+          <input type="password" name="password" className="input" placeholder="Password" />
           <div>
             <a className="link link-hover">Forgot password?</a>
           </div>
           <button className="btn btn-primary mt-4">Login</button>
         </form>
+        <div className="divider">or</div>
         {/* Google */}
         <button
           //   onClick={handleSignInWithGoogle}

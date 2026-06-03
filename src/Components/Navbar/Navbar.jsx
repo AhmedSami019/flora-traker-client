@@ -1,7 +1,18 @@
-import { NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import logo from "../../assets/logo.png";
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Navbar = () => {
+  const { user, singOutUser } = useContext(AuthContext);
+  const navigate = useNavigate()
+
+  // sing out handler
+  const handleSignOutUser = () => {
+    singOutUser()
+    navigate('/')
+  };
+
   // links
   const links = (
     <>
@@ -45,7 +56,7 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <NavLink to={'/'} className="flex items-end gap-2">
+        <NavLink to={"/"} className="flex items-end gap-2">
           <div className="w-10">
             <img className="w-full" src={logo} alt="Flora brand logo" />
           </div>
@@ -57,39 +68,44 @@ const Navbar = () => {
       </div>
 
       {/* this end section fo navbar */}
-      <div className="navbar-end">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-10 rounded-full">
-              <img
-                alt="woman smiling in natural outdoor setting with soft lighting"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
+      {user ? (
+        <div className="navbar-end">
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
+              <div className="w-10 rounded-full">
+                <img
+                  alt="woman smiling in natural outdoor setting with soft lighting"
+                  src={user.photoURL}
+                />
+              </div>
             </div>
+            <ul
+              tabIndex="-1"
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            >
+              <li>
+                <Link to={`/dashboard`} className="justify-between">
+                  Profile
+                </Link>
+              </li>
+              <li>
+                <a>Settings</a>
+              </li>
+              <li>
+                <a onClick={handleSignOutUser}>Logout</a>
+              </li>
+            </ul>
           </div>
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a>Logout</a>
-            </li>
-          </ul>
         </div>
-      </div>
+      ) : (
+        <div className="navbar-end">
+          <NavLink to={"/dashboard/login"} className="btn btn-primary">Sing in</NavLink>
+        </div>
+      )}
     </div>
   );
 };

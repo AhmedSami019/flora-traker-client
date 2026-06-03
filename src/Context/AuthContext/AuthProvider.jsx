@@ -1,47 +1,75 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import { AuthContext } from "./AuthContext";
 import auth from "../../firebase/firebase.init";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({ children }) => {
+  // some states
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // some states
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
+  // create user with email and password
+  const signUpWithEmailAndPass = (email, password) => {
+    setLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
 
-    // create user with email and password
-    const signUpWithEmailAndPass = (email, password)=>{
-        setLoading(true)
-        return createUserWithEmailAndPassword(auth, email, password)
-    }
+  // sing in existing user
+  const signInWithEmailAndPass = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
-    // sing in existing user
-    const signInWithEmailAndPass = (email, password)=>{
-        setLoading(true)
-        return signInWithEmailAndPassword(auth, email, password)
-    }
+  // signOut user
+  const singOutUser = () => {
+    setLoading(true);
+    return signOut(auth)
+      .then(() => {
+        setLoading(false);
+        Swal.fire({
+          title: "Successful",
+          icon: "success",
+          text: "User singOut successful!",
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: `${error.message}`,
+        });
+      });
+  };
 
-    // user observer or listener
-    useEffect(()=>{
-        const unSubscribe = onAuthStateChanged(auth, (currentUser)=>{
-            if(currentUser){
-                console.log(currentUser);
-            }else{
-                console.log('something went wrong');
-            }
-        })
-        return unSubscribe
-    },[])
+  // user observer or listener
+  useEffect(() => {
+    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+    return unSubscribe;
+  }, []);
 
-    const userInfo = {
-        user,
-        setUser, 
-        loading, 
-        setLoading,
-        signUpWithEmailAndPass, 
-        signInWithEmailAndPass
-    }
-    return <AuthContext value={userInfo}>{children}</AuthContext>
+  const userInfo = {
+    user,
+    setUser,
+    loading,
+    setLoading,
+    signUpWithEmailAndPass,
+    signInWithEmailAndPass,
+    singOutUser,
+  };
+  return <AuthContext value={userInfo}>{children}</AuthContext>;
 };
 
 export default AuthProvider;

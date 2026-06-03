@@ -6,6 +6,7 @@ import Shop from "../Pages/Shop/Shop";
 import AdminLayout from "../Layouts/AdminLayout";
 import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
+import Profile from "../Pages/Profile/Profile";
 
 const router = createBrowserRouter([
 {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     path: "/dashboard",
     Component: AdminLayout,
     children: [
+        {
+            index: true,
+            Component: Profile
+        },
         {
             path: "register",
             Component: Register 

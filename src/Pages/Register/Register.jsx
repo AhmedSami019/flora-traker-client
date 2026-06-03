@@ -1,27 +1,42 @@
 import { useContext } from "react";
 import { NavLink } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
+import { Bounce, toast } from "react-toastify";
 
 const Register = () => {
+  const { signUpWithEmailAndPass, setUser, setLoading } =
+    useContext(AuthContext);
 
-const {signUpWithEmailAndPass, setUser, setLoading} = useContext(AuthContext)
+  // handler function
+  const handleCreateUser = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const formValue = Object.fromEntries(formData.entries());
 
-// handler function
-const handleCreateUser= (e)=>{
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const formValue = Object.fromEntries(formData.entries())
-    
+    if (formValue.password !== formValue.confirmPassword) {
+      toast.warn("confirm password is not equal password!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+
     signUpWithEmailAndPass(formValue.email, formValue.password)
-    .then(result =>{
-        setUser(result.user)
-        setLoading(false)
+      .then((result) => {
+        setUser(result.user);
+        setLoading(false);
         console.log("user created successful", result.user);
-    })
-    .then(error =>{
+      })
+      .then((error) => {
         console.log(error.massage);
-    })
-}
+      });
+  };
 
   return (
     <div className="card bg-base-100 mt-10 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
@@ -66,7 +81,7 @@ const handleCreateUser= (e)=>{
           <input
             type="password"
             className="input w-full"
-            name="newPassword"
+            name="confirmPassword"
             placeholder="Confirm Password"
           />
           <div>

@@ -5,26 +5,26 @@ const Sidebar = () => {
   // links
   const links = (
     <>
-      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:font-semibold">
+      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md">
       <LayoutDashboard color="black"></LayoutDashboard>
         Dashboard
       </Link>
       <Link
         to={"/dashboard/myTrees"}
-        className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:font-semibold"
+        className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md"
       >
         <Group color="black"></Group>
         My Collection
       </Link>
-      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:font-semibold">
+      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md">
       <CalendarClock color="black"></CalendarClock>
         Care Calender
       </Link>
-      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:font-semibold">
+      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md">
       <NotebookPen color="black"></NotebookPen>
         Plant Journal
       </Link>
-      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:font-semibold">
+      <Link className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md">
       <BrickWallShield color="black" />
         Botanical Guide
       </Link>

@@ -1,14 +1,15 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
+import PlantCard from "../../Components/PlantCard/PlantCard";
 
 const MyTrees = () => {
   const { user } = useContext(AuthContext);
   const instanceAxios = useAxios();
 
-  // all states 
-  const [myPlants, setMyPlants] = useState(null)
+     // all states
+    const [myPlants, setMyPlants] = useState([])
 
   const addTreeRef = useRef();
 
@@ -25,10 +26,10 @@ const MyTrees = () => {
     console.log("new tree added");
     const form = e.target;
     const formData = new FormData(form);
-    const newTree = Object.fromEntries(formData.entries());
-    console.log(newTree);
+    const newPlant = Object.fromEntries(formData.entries());
+    console.log(newPlant);
     // for post the tree in to server
-    instanceAxios.post("/plants", newTree).then((result) => {
+    instanceAxios.post("/plants", newPlant).then((result) => {
       console.log(result);
       if (result.data.insertedId) {
         handleCloseModal()
@@ -38,7 +39,8 @@ const MyTrees = () => {
           icon: "success",
           text: "tree added successfully!",
         });
-        newTree._id = result.data.insertedId
+        newPlant._id = result.data.insertedId
+        setMyPlants([...myPlants, newPlant])
       }else{
          Swal.fire({
                   icon: "error",
@@ -49,10 +51,16 @@ const MyTrees = () => {
     });
   };
 
-  if(user){
-    instanceAxios.get()
-  }
-
+   // loading the plants from server if user is presents
+    useEffect(()=>{
+          if(user){
+        instanceAxios.get('/plants')
+        .then(result => {
+            setMyPlants(result.data)
+        })
+    }
+    }, [user, instanceAxios])
+  
   return (
     <div className="min-h-screen">
       <div className="w-full flex justify-between ">
@@ -69,7 +77,6 @@ const MyTrees = () => {
               <form
                 onSubmit={handleAddNewTree}
                 className="w-full"
-                method="dialog"
               >
                 <fieldset className="fieldset w-full">
                   <label className="label">Tree name</label>
@@ -139,7 +146,7 @@ const MyTrees = () => {
                 </fieldset>
                 {/* handler button */}
                 <div className="w-full flex gap-5 justify-between mt-5">
-                  <button className="w-1/3 btn" onClick={handleCloseModal}>
+                  <button type="button" className="w-1/3 btn" onClick={handleCloseModal}>
                     Close
                   </button>
                   <button type="submit" className="w-1/3 btn btn-primary">submit</button>
@@ -150,6 +157,16 @@ const MyTrees = () => {
         </dialog>
       </div>
       <div className="divider"></div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
+        {/* {
+          myPlants.map(plant => {
+          <div key={plant._id}>{plant.tree}</div>})
+        } */}
+        {myPlants.map((plant) => (
+          <PlantCard key={plant._id} plant={plant} />
+        ))}
+      </div>
     </div>
   );
 };

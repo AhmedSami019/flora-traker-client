@@ -39,7 +39,6 @@ const MyTrees = () => {
     console.log(newPlant);
     // for post the tree in to server
     instanceAxios.post("/plants", newPlant).then((result) => {
-      console.log(result);
       if (result.data.insertedId) {
         handleCloseModal();
         form.reset();
@@ -74,7 +73,7 @@ const MyTrees = () => {
       if (result.isConfirmed) {
         // use axios to delete
         instanceAxios.delete(`/plants/${id}`).then((result) => {
-          if (result.data?.deleteCount) {
+          if (result.data?.deletedCount > 0) {
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",

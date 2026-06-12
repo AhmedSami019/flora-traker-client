@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState, } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
@@ -8,10 +8,19 @@ const MyTrees = () => {
   const { user } = useContext(AuthContext);
   const instanceAxios = useAxios();
 
-     // all states
-    const [myPlants, setMyPlants] = useState([])
+  // all states
+  const [myPlants, setMyPlants] = useState([]);
 
   const addTreeRef = useRef();
+
+  // loading the plants from server if user is presents
+  useEffect(() => {
+    if (user) {
+      instanceAxios.get("/plants").then((result) => {
+        setMyPlants(result.data);
+      });
+    }
+  }, [user, instanceAxios]);
 
   // handler function
   const handleOpenModal = () => {
@@ -32,35 +41,67 @@ const MyTrees = () => {
     instanceAxios.post("/plants", newPlant).then((result) => {
       console.log(result);
       if (result.data.insertedId) {
-        handleCloseModal()
-        form.reset()
+        handleCloseModal();
+        form.reset();
         Swal.fire({
           title: "success",
           icon: "success",
           text: "tree added successfully!",
         });
-        newPlant._id = result.data.insertedId
-        setMyPlants([...myPlants, newPlant])
-      }else{
-         Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: `there is an issue`,
-                });
+        newPlant._id = result.data.insertedId;
+        setMyPlants([...myPlants, newPlant]);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: `there is an issue`,
+        });
       }
     });
   };
 
-   // loading the plants from server if user is presents
-    useEffect(()=>{
-          if(user){
-        instanceAxios.get('/plants')
-        .then(result => {
-            setMyPlants(result.data)
-        })
-    }
-    }, [user, instanceAxios])
-  
+  // handler function to remove single plant
+  const handleRemovePlant = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // use axios to delete
+        instanceAxios.delete(`/plants/${id}`).then((result) => {
+          if (result.data?.deleteCount) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+            });
+            const remainingPlants = myPlants.filter(
+              (plant) => plant._id !== id,
+            );
+            setMyPlants(remainingPlants);
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Could not find that plant to delete on the server.",
+            });
+          }
+        });
+      }
+    }).catch(err => {
+      Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: `${err.message}`
+        });
+    })
+  };
+
   return (
     <div className="min-h-screen">
       <div className="w-full flex justify-between ">
@@ -74,10 +115,7 @@ const MyTrees = () => {
 
             {/* modal to add new tree */}
             <div className="modal-action">
-              <form
-                onSubmit={handleAddNewTree}
-                className="w-full"
-              >
+              <form onSubmit={handleAddNewTree} className="w-full">
                 <fieldset className="fieldset w-full">
                   <label className="label">Tree name</label>
                   <input
@@ -146,10 +184,16 @@ const MyTrees = () => {
                 </fieldset>
                 {/* handler button */}
                 <div className="w-full flex gap-5 justify-between mt-5">
-                  <button type="button" className="w-1/3 btn" onClick={handleCloseModal}>
+                  <button
+                    type="button"
+                    className="w-1/3 btn"
+                    onClick={handleCloseModal}
+                  >
                     Close
                   </button>
-                  <button type="submit" className="w-1/3 btn btn-primary">submit</button>
+                  <button type="submit" className="w-1/3 btn btn-primary">
+                    submit
+                  </button>
                 </div>
               </form>
             </div>
@@ -164,7 +208,11 @@ const MyTrees = () => {
           <div key={plant._id}>{plant.tree}</div>})
         } */}
         {myPlants.map((plant) => (
-          <PlantCard key={plant._id} plant={plant} />
+          <PlantCard
+            key={plant._id}
+            plant={plant}
+            handleRemovePlant={handleRemovePlant}
+          />
         ))}
       </div>
     </div>

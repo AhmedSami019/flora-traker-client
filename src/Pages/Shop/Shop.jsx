@@ -1,20 +1,23 @@
 import { Link } from "react-router";
-import buildImage from "../../assets/buildOnProcess.svg";
 import { ArrowLeft } from "lucide-react";
+import store from "../../assets/Animations/store.json";
+import LottieModule from "lottie-react";
+const Lottie = LottieModule.default || LottieModule;
 const Shop = () => {
+
+  console.log(Lottie);
   return (
     <div className="space-y-10 flex flex-col items-center my-10 h-screen">
       <h2 className="text-4xl text-center font-bold">Build in process</h2>
       <div className="">
-        <img
-          className="mx-auto"
-          src={buildImage}
-          alt="build on process image"
+      <Lottie
+          animationData={store}
+          loop={true}
         />
       </div>
       <div>
         <Link to={"/"} className="btn btn-primary">
-          <ArrowLeft></ArrowLeft>Go home
+          <ArrowLeft/>Go home
         </Link>
       </div>
     </div>

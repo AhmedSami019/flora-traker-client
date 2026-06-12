@@ -32,7 +32,7 @@ const Sidebar = () => {
   );
 
   return (
-    <div className="bg-white p-2  w-80">
+    <div className="bg-white p-2  w-80 h-full">
       <ul className="space-y-0.5 pl-5 mt-5 flex flex-col">{links}</ul>
     </div>
   );

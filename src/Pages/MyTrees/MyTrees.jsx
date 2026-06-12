@@ -103,7 +103,7 @@ const MyTrees = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="w-full flex justify-between ">
+      <div className="w-full flex justify-between sticky top-20 z-10 bg-base-300 py-3">
         <h2 className="text-2xl font-bold">My trees collection</h2>
         <button className="btn btn-primary" onClick={handleOpenModal}>
           add tree

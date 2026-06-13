@@ -3,6 +3,14 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
 import PlantCard from "../../Components/PlantCard/PlantCard";
+import {
+  addDays,
+  differenceInDays,
+  format,
+  isPast,
+  isToday,
+  isValid,
+} from "date-fns";
 
 const MyPlants = () => {
   const { user } = useContext(AuthContext);
@@ -10,7 +18,9 @@ const MyPlants = () => {
 
   // all states
   const [myPlants, setMyPlants] = useState([]);
-
+  const [lastWatered, setLastWatered] = useState(null);
+  const [waterSchedule, setWaterSchedule] = useState(null);
+  // const [nextWaterDate, setNextWaterDate] = useState(null);
   const addTreeRef = useRef();
 
   // loading the plants from server if user is presents
@@ -22,12 +32,47 @@ const MyPlants = () => {
     }
   }, [user, instanceAxios]);
 
+  // to manage and calculate data
+  const nextWaterDate =
+    lastWatered && waterSchedule
+      ? (() => {
+          const date = new Date(lastWatered);
+
+          // FIX: prevent invalid date crash
+          if (!isValid(date)) return "";
+
+          return format(addDays(date, Number(waterSchedule)), "MM-dd-yyyy");
+        })()
+      : "";
+
+  // to manage health status
+  const healthStatus =
+    lastWatered && waterSchedule
+      ? () => {
+          const nextWaterDate = addDays(
+            new Date(lastWatered),
+            Number(waterSchedule),
+          );
+          const today = new Date();
+          const daysLeft = differenceInDays(nextWaterDate, today);
+          if (isPast(nextWaterDate) || isToday(nextWaterDate)) {
+            return "critical";
+          }
+          if (daysLeft === 1) {
+            return "warning";
+          }
+          return "healthy";
+        }
+      : "";
+
   // handler function
   const handleOpenModal = () => {
     addTreeRef.current?.showModal();
   };
   const handleCloseModal = () => {
     addTreeRef.current?.close();
+    setWaterSchedule("");
+    setLastWatered("");
   };
 
   const handleAddNewTree = (e) => {
@@ -69,41 +114,43 @@ const MyPlants = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // use axios to delete
-        instanceAxios.delete(`/plants/${id}`).then((result) => {
-          if (result.data?.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-            });
-            const remainingPlants = myPlants.filter(
-              (plant) => plant._id !== id,
-            );
-            setMyPlants(remainingPlants);
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Could not find that plant to delete on the server.",
-            });
-          }
-        });
-      }
-    }).catch(err => {
-      Swal.fire({
+    })
+      .then((result) => {
+        if (result.isConfirmed) {
+          // use axios to delete
+          instanceAxios.delete(`/plants/${id}`).then((result) => {
+            if (result.data?.deletedCount > 0) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success",
+              });
+              const remainingPlants = myPlants.filter(
+                (plant) => plant._id !== id,
+              );
+              setMyPlants(remainingPlants);
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Could not find that plant to delete on the server.",
+              });
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        Swal.fire({
           icon: "error",
           title: "Error",
-          text: `${err.message}`
+          text: `${err.message}`,
         });
-    })
+      });
   };
 
   return (
     <div className="min-h-screen">
-      <div className="w-full flex justify-between sticky top-20 z-10 bg-base-300 py-3">
+      <div className="w-full flex justify-between sticky top-16 z-10 bg-base-300 py-4">
         <h2 className="text-2xl font-bold">My trees collection</h2>
         <button className="btn btn-primary" onClick={handleOpenModal}>
           add tree
@@ -122,6 +169,7 @@ const MyPlants = () => {
                     className="input w-full"
                     name="tree"
                     placeholder="tree name"
+                    required
                   />
 
                   <label className="label">Category</label>
@@ -129,8 +177,10 @@ const MyPlants = () => {
                     id="plant-kingdom-trees"
                     className="input w-full"
                     name="tree_category"
+                    required
                   >
                     {/* all options for tree category */}
+                    <option value="">select category</option>
                     <option value="true-tree-ferns">True Tree Ferns</option>
                     <option value="primitive-scale-trees">
                       Primitive Scale Trees (Extinct)
@@ -157,18 +207,65 @@ const MyPlants = () => {
 
                   <label className="label">Watering schedule</label>
                   <input
-                    type="text"
+                    type="number"
                     className="input w-full"
                     name="water_schedule"
-                    placeholder="day after"
+                    placeholder="Water every X days"
+                    value={waterSchedule}
+                    onChange={(e) => setWaterSchedule(e.target.value)}
+                    required
                   />
+
+                  <label className="label">Last Watered Date</label>
+
+                  <input
+                    type="date"
+                    className="input w-full"
+                    name="last_watered"
+                    value={lastWatered}
+                    onChange={(e) => setLastWatered(e.target.value)}
+                    required
+                  />
+
+                  <label className="label">Next watering date</label>
+                  <input
+                    type="text"
+                    className="input w-full"
+                    name="next_water"
+                    value={nextWaterDate}
+                    readOnly
+                  />
+
+                  <label className="label">Health status</label>
+                  <input
+                    type="text"
+                    className="input w-full"
+                    name="health_status"
+                    placeholder="condition of plant"
+                    value={healthStatus}
+                    required
+                  />
+
+                  <label className="label">Care level</label>
+                  <select
+                    className="input w-full"
+                    name="care_level"
+                    id="plant-care-level"
+                    required
+                  >
+                    <option value="">select care option</option>
+                    <option value="easy">easy</option>
+                    <option value="moderate">moderate</option>
+                    <option value="heard">heard</option>
+                  </select>
 
                   <label className="label">Plant photo</label>
                   <input
                     type="text"
                     className="input w-full"
-                    name="photo_url"
+                    name="photo"
                     placeholder="plant photo url"
+                    required
                   />
 
                   <label className="label">Author</label>
@@ -178,6 +275,7 @@ const MyPlants = () => {
                     name="author"
                     defaultValue={user ? user.displayName : ""}
                     placeholder={!user ? "enter name" : ""}
+                    required
                   />
 
                   <label className="label">Author email</label>
@@ -187,6 +285,7 @@ const MyPlants = () => {
                     name="author_email"
                     defaultValue={user ? user.email : ""}
                     placeholder={!user ? "enter email" : ""}
+                    required
                   />
                 </fieldset>
                 {/* handler button */}

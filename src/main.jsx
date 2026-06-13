@@ -4,6 +4,7 @@ import "./index.css";
 import { RouterProvider } from "react-router";
 import router from "./Router/router.jsx";
 import AuthProvider from "./Context/AuthContext/AuthProvider.jsx";
+import "cally"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

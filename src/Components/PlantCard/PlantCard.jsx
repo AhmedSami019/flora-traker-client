@@ -1,12 +1,13 @@
 import { Trash2 } from "lucide-react";
 
 const PlantCard = ({plant, handleRemovePlant}) => {
-    const {_id, tree, tree_category} = plant
+    const {_id, tree, tree_category, photo} = plant
   return (
     <div className="card bg-base-100 shadow-sm">
-      <figure>
+      <figure className="h-70 w-full">
         <img
-          src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+        className="w-full"
+          src={photo}
           alt="Shoes"
         />
       </figure>
@@ -15,6 +16,9 @@ const PlantCard = ({plant, handleRemovePlant}) => {
         <p>
           {tree_category}
         </p>
+        <div>
+          {}
+        </div>
         <div className="card-actions justify-between">
             <button onClick={()=> handleRemovePlant(_id)} className="btn btn-error text-white"><Trash2/></button>
           <button className="btn btn-primary">Give water</button>

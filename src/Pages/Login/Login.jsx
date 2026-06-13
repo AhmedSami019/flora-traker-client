@@ -4,12 +4,12 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import Swal from "sweetalert2";
 
 const Login = () => {
-  const { setUser, setLoading, signInWithEmailAndPass } =
+  const { setUser, setLoading, signInWithEmailAndPass, singInWithGoogle } =
     useContext(AuthContext);
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const location = useLocation()
-    const path = location.state || '/dashboard'
+  const location = useLocation();
+  const path = location.state || "/dashboard";
 
   // login handler function
   const handleSingUser = (e) => {
@@ -27,7 +27,7 @@ const Login = () => {
           icon: "success",
           text: "User Logged successfully!",
         });
-        navigate(path)
+        navigate(path);
       })
       .catch((error) => {
         setLoading(false);
@@ -36,6 +36,15 @@ const Login = () => {
           title: "Oops...",
           text: `${error.message}`,
         });
+      });
+  };
+
+  // handle sing in with google
+  const handleSignInWithGoogle = () => {
+    singInWithGoogle()
+      .then((res) => console.log(res))
+      .catch((error) => {
+        console.error(error);
       });
   };
 
@@ -52,9 +61,19 @@ const Login = () => {
         </p>
         <form onSubmit={handleSingUser} className="fieldset">
           <label className="label">Email</label>
-          <input type="email" name="email" className="input" placeholder="Email" />
+          <input
+            type="email"
+            name="email"
+            className="input"
+            placeholder="Email"
+          />
           <label className="label">Password</label>
-          <input type="password" name="password" className="input" placeholder="Password" />
+          <input
+            type="password"
+            name="password"
+            className="input"
+            placeholder="Password"
+          />
           <div>
             <a className="link link-hover">Forgot password?</a>
           </div>
@@ -63,7 +82,7 @@ const Login = () => {
         <div className="divider">or</div>
         {/* Google */}
         <button
-          //   onClick={handleSignInWithGoogle}
+            onClick={handleSignInWithGoogle}
           className="btn rounded-xl bg-white text-black border-[#e5e5e5]"
         >
           <svg

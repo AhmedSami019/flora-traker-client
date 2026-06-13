@@ -3,14 +3,7 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
 import PlantCard from "../../Components/PlantCard/PlantCard";
-import {
-  addDays,
-  differenceInDays,
-  format,
-  isPast,
-  isToday,
-  isValid,
-} from "date-fns";
+import { addDays, format, isValid } from "date-fns";
 
 const MyPlants = () => {
   const { user } = useContext(AuthContext);
@@ -27,7 +20,8 @@ const MyPlants = () => {
   useEffect(() => {
     if (user) {
       instanceAxios.get("/plants").then((result) => {
-        setMyPlants(result.data);
+        const verifiedPlant = result.data.filter( plant => plant.author_email === user.email)
+        setMyPlants(verifiedPlant);
       });
     }
   }, [user, instanceAxios]);
@@ -43,26 +37,6 @@ const MyPlants = () => {
 
           return format(addDays(date, Number(waterSchedule)), "MM-dd-yyyy");
         })()
-      : "";
-
-  // to manage health status
-  const healthStatus =
-    lastWatered && waterSchedule
-      ? () => {
-          const nextWaterDate = addDays(
-            new Date(lastWatered),
-            Number(waterSchedule),
-          );
-          const today = new Date();
-          const daysLeft = differenceInDays(nextWaterDate, today);
-          if (isPast(nextWaterDate) || isToday(nextWaterDate)) {
-            return "critical";
-          }
-          if (daysLeft === 1) {
-            return "warning";
-          }
-          return "healthy";
-        }
       : "";
 
   // handler function
@@ -81,6 +55,11 @@ const MyPlants = () => {
     const form = e.target;
     const formData = new FormData(form);
     const newPlant = Object.fromEntries(formData.entries());
+    newPlant.last_watered = new Date(newPlant.last_watered).toISOString();
+    newPlant.next_water = addDays(
+      new Date(newPlant.last_watered),
+      Number(newPlant.water_schedule),
+    ).toISOString();
     console.log(newPlant);
     // for post the tree in to server
     instanceAxios.post("/plants", newPlant).then((result) => {
@@ -102,6 +81,35 @@ const MyPlants = () => {
         });
       }
     });
+  };
+
+  const handleGiveWater = async (plant) => {
+    try {
+      const toDay = new Date();
+      const updateDate = {
+        last_watered: toDay.toISOString(),
+        next_water: addDays(toDay, Number(plant.water_schedule)).toISOString(),
+      };
+      const result = await instanceAxios.patch(`/plants/${plant._id}`, updateDate);
+      if (result.data.modifiedCount > 0) {
+        setMyPlants(
+          myPlants.map((p) => 
+            p._id === plant._id ? { ...p, ...updateDate } : p
+          ),
+        );
+         Swal.fire({
+        icon: "success",
+        title: "Plant Watered!",
+        text: `${plant.tree} has been watered.`,
+      });
+      }
+    } catch (error) {
+      Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: `${error.message}`,
+    });
+    }
   };
 
   // handler function to remove single plant
@@ -242,7 +250,6 @@ const MyPlants = () => {
                     className="input w-full"
                     name="health_status"
                     placeholder="condition of plant"
-                    value={healthStatus}
                     required
                   />
 
@@ -318,6 +325,7 @@ const MyPlants = () => {
             key={plant._id}
             plant={plant}
             handleRemovePlant={handleRemovePlant}
+            handleGiveWater={handleGiveWater}
           />
         ))}
       </div>

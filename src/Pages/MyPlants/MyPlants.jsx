@@ -4,7 +4,7 @@ import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
 import PlantCard from "../../Components/PlantCard/PlantCard";
 
-const MyTrees = () => {
+const MyPlants = () => {
   const { user } = useContext(AuthContext);
   const instanceAxios = useAxios();
 
@@ -163,6 +163,14 @@ const MyTrees = () => {
                     placeholder="day after"
                   />
 
+                  <label className="label">Plant photo</label>
+                  <input
+                    type="text"
+                    className="input w-full"
+                    name="photo_url"
+                    placeholder="plant photo url"
+                  />
+
                   <label className="label">Author</label>
                   <input
                     type="text"
@@ -218,4 +226,4 @@ const MyTrees = () => {
   );
 };
 
-export default MyTrees;
+export default MyPlants;

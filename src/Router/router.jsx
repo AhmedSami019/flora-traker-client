@@ -8,7 +8,7 @@ import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
 import Profile from "../Pages/Profile/Profile";
 import PrivateRoute from "./PrivateRoute";
-import MyTrees from "../Pages/MyTrees/MyTrees";
+import MyPlants from "../Pages/MyPlants/MyPlants";
 
 const router = createBrowserRouter([
 {
@@ -46,8 +46,8 @@ const router = createBrowserRouter([
             Component: Login
         },
         {
-            path: 'myTrees',
-            Component: MyTrees
+            path: 'MyPlants',
+            element: <PrivateRoute><MyPlants></MyPlants></PrivateRoute>
         }
     ]
 }

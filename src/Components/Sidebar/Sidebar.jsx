@@ -10,7 +10,7 @@ const Sidebar = () => {
         Dashboard
       </Link>
       <Link
-        to={"/dashboard/myTrees"}
+        to={"/dashboard/MyPlants"}
         className="flex gap-2 items-center text-gray-600 py-2 px-4 font-medium hover:bg-base-300 rounded-md"
       >
         <Group color="black"></Group>

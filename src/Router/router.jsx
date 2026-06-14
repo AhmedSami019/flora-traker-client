@@ -10,11 +10,13 @@ import Profile from "../Pages/Profile/Profile";
 import PrivateRoute from "./PrivateRoute";
 import MyPlants from "../Pages/MyPlants/MyPlants";
 import PlantDetails from "../Pages/PlantDetails/PlantDetails";
+import Error from "../Pages/Error/Error";
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: HomeLayout,
+    errorElement: <Error></Error>,
     children: [
       {
         index: true,
@@ -33,6 +35,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     Component: AdminLayout,
+    errorElement: <Error></Error>,
     children: [
       {
         index: true,

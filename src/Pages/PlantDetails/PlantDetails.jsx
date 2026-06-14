@@ -6,7 +6,6 @@ import {
   isToday,
   isValid,
 } from "date-fns";
-import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
@@ -29,7 +28,6 @@ const PlantDetails = () => {
   const axiosSecure = useAxiosSecure()
 
   const [lastWatered, setLastWatered] = useState(last_watered);
-  const [nextWater, setNextWater] = useState(next_water);
 
   const nextWaterDate =
     lastWatered && water_schedule
@@ -72,10 +70,7 @@ const PlantDetails = () => {
       );
 
       if (result.data.modifiedCount > 0) {
-        (setLastWatered(toDay),
-        setNextWater(
-          format(addDays(toDay, Number(plant.water_schedule)), "dd-MM-yyy"),
-        ));
+        setLastWatered(toDay);
         Swal.fire({
           icon: "success",
           title: "Plant Watered!",
@@ -138,9 +133,6 @@ const PlantDetails = () => {
             Next water date : <span className="font-bold">{nextWaterDate}</span>
           </p>
           <div className="flex gap-5">
-            <button className="btn btn-error">
-              <Trash2 color="white" />
-            </button>
             <button
               onClick={() => handleGiveWater(plant)}
               className="btn btn-primary"

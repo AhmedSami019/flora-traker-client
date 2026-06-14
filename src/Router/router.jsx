@@ -61,8 +61,7 @@ const router = createBrowserRouter([
       {
         path: "myPlant/:id",
         loader: ({ params }) => {
-          fetch(`/plants/${params.id}`)
-          .then(res => res.json())
+          return fetch(`http://localhost:3000/plants/${params.id}`);
         },
         element: (
           <PrivateRoute>

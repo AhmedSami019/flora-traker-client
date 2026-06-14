@@ -1,5 +1,6 @@
 import { differenceInDays, isPast, isToday } from "date-fns";
 import { Trash2 } from "lucide-react";
+import { Link } from "react-router";
 
 const PlantCard = ({ plant, handleRemovePlant, handleGiveWater }) => {
   const {
@@ -12,16 +13,7 @@ const PlantCard = ({ plant, handleRemovePlant, handleGiveWater }) => {
     next_water,
   } = plant;
 
-  // // state
-  // const [lastWateredDate, setLastWatered] = useState(new Date(last_watered))
-  // const [nextWaterDate, setNextWaterDate] = useState(new Date(next_water))
-
-  // // handler function
-  // const handleGiveWater = ()=>{
-  //   const thisDay = new Date()
-  //   setLastWatered(thisDay)
-  // }
-
+  // handler function
   const newHealthCondition =
     last_watered && water_schedule
       ? (() => {
@@ -38,12 +30,12 @@ const PlantCard = ({ plant, handleRemovePlant, handleGiveWater }) => {
         })()
       : "";
 
-  
-
   return (
     <div className="card bg-base-100 shadow-sm">
       <figure className="h-70 w-full">
+        <Link to={`/dashboard/myPlant/${_id}`}>
         <img className="w-full" src={photo} alt="Shoes" />
+        </Link>
       </figure>
       <div className="card-body">
         <div className="flex justify-between items-center">
@@ -62,7 +54,12 @@ const PlantCard = ({ plant, handleRemovePlant, handleGiveWater }) => {
           >
             <Trash2 />
           </button>
-          <button onClick={()=> handleGiveWater(plant)} className="btn btn-primary">Give water</button>
+          <button
+            onClick={() => handleGiveWater(plant)}
+            className="btn btn-primary"
+          >
+            Give water
+          </button>
         </div>
       </div>
     </div>

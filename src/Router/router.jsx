@@ -9,48 +9,69 @@ import Login from "../Pages/Login/Login";
 import Profile from "../Pages/Profile/Profile";
 import PrivateRoute from "./PrivateRoute";
 import MyPlants from "../Pages/MyPlants/MyPlants";
+import PlantDetails from "../Pages/PlantDetails/PlantDetails";
 
 const router = createBrowserRouter([
-{
-    path: '/', 
-    Component: HomeLayout, 
+  {
+    path: "/",
+    Component: HomeLayout,
     children: [
-        {
-            index: true, 
-            Component: Home
-        }, 
-        {
-            path: '/about', 
-            Component: About
-        },
-        {
-            path: "/shop",
-            Component: Shop
-        }
-    ]
-},
-{
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/shop",
+        Component: Shop,
+      },
+    ],
+  },
+  {
     path: "/dashboard",
     Component: AdminLayout,
     children: [
-        {
-            index: true,
-            element: <PrivateRoute><Profile></Profile></PrivateRoute>
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <Profile></Profile>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "register",
+        Component: Register,
+      },
+      {
+        path: "login",
+        Component: Login,
+      },
+      {
+        path: "myPlants",
+        element: (
+          <PrivateRoute>
+            <MyPlants></MyPlants>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "myPlant/:id",
+        loader: ({ params }) => {
+          fetch(`/plants/${params.id}`)
+          .then(res => res.json())
         },
-        {
-            path: "register",
-            Component: Register 
-        },
-        {
-            path: "login",
-            Component: Login
-        },
-        {
-            path: 'MyPlants',
-            element: <PrivateRoute><MyPlants></MyPlants></PrivateRoute>
-        }
-    ]
-}
-])
+        element: (
+          <PrivateRoute>
+            <PlantDetails></PlantDetails>
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+]);
 
-export default router
+export default router;

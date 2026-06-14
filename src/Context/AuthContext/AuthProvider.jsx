@@ -10,11 +10,14 @@ import { AuthContext } from "./AuthContext";
 import auth from "../../firebase/firebase.init";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import useAxios from "../../Hooks/useAxios";
 
 const AuthProvider = ({ children }) => {
   // some states
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const instanceAxios = useAxios()
 
   // create user with email and password
   const signUpWithEmailAndPass = (email, password) => {
@@ -61,13 +64,19 @@ const AuthProvider = ({ children }) => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        const loggedUser = {email: currentUser.email}
+        instanceAxios.post('/getToken', loggedUser)
+        .then(result =>{
+          const token = result.data.token
+          localStorage.setItem("token", token)
+        })
       } else {
         setUser(null);
       }
       setLoading(false)
     });
     return unSubscribe;
-  }, []);
+  }, [instanceAxios]);
 
   const userInfo = {
     user,

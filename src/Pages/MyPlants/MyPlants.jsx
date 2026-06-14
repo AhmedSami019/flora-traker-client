@@ -1,13 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
-import useAxios from "../../Hooks/useAxios";
 import Swal from "sweetalert2";
 import PlantCard from "../../Components/PlantCard/PlantCard";
 import { addDays, format, isValid } from "date-fns";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const MyPlants = () => {
   const { user } = useContext(AuthContext);
-  const instanceAxios = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   // all states
   const [myPlants, setMyPlants] = useState([]);
@@ -19,12 +19,12 @@ const MyPlants = () => {
   // loading the plants from server if user is presents
   useEffect(() => {
     if (user) {
-      instanceAxios.get("/plants").then((result) => {
+      axiosSecure.get(`/plants?email=${user.email}`).then((result) => {
         const verifiedPlant = result.data.filter( plant => plant.author_email === user.email)
         setMyPlants(verifiedPlant);
       });
     }
-  }, [user, instanceAxios]);
+  }, [user, axiosSecure]);
 
   // to manage and calculate data
   const nextWaterDate =
@@ -62,7 +62,7 @@ const MyPlants = () => {
     ).toISOString();
     console.log(newPlant);
     // for post the tree in to server
-    instanceAxios.post("/plants", newPlant).then((result) => {
+    axiosSecure.post("/plants", newPlant).then((result) => {
       if (result.data.insertedId) {
         handleCloseModal();
         form.reset();
@@ -90,7 +90,7 @@ const MyPlants = () => {
         last_watered: toDay.toISOString(),
         next_water: addDays(toDay, Number(plant.water_schedule)).toISOString(),
       };
-      const result = await instanceAxios.patch(`/plants/${plant._id}`, updateDate);
+      const result = await axiosSecure.patch(`/plants/${plant._id}`, updateDate);
       if (result.data.modifiedCount > 0) {
         setMyPlants(
           myPlants.map((p) => 
@@ -126,7 +126,7 @@ const MyPlants = () => {
       .then((result) => {
         if (result.isConfirmed) {
           // use axios to delete
-          instanceAxios.delete(`/plants/${id}`).then((result) => {
+          axiosSecure.delete(`/plants/${id}`).then((result) => {
             if (result.data?.deletedCount > 0) {
               Swal.fire({
                 title: "Deleted!",
